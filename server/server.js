@@ -14,8 +14,8 @@ mongoose.Promise = global.Promise;
 
 // Check if the app is running on localhost or not
 if (process.env.NODE_ENV === 'production') {
+    const cloudDBUrl = process.env.CLOUD_URL;
   // App is not running on localhost, connect to MongoDB Cloud
-  const cloudDBUrl = process.env.CLOUD_URL;
   mongoose.connect(cloudDBUrl, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
       console.log('Connected to MongoDB Cloud');
