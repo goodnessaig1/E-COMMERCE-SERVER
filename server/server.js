@@ -27,7 +27,7 @@ if (process.env.NODE_ENV === 'production') {
 } else {
   // App is running on localhost, connect to local MongoDB instance
   const localDBUrl = process.env.DATABASE
-  mongoose.connect(cloudDBUrl)
+  mongoose.connect(localDBUrl)
     .then(() => {
       console.log('Connected to local MongoDB');
     })
