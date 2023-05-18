@@ -13,10 +13,11 @@ mongoose.Promise = global.Promise;
 // mongoose.connect(process.env.DATABASE, {autoIndex: false}).then(() => console.log('connected to DB'))
 
 // Check if the app is running on localhost or not
-const cloudDBUrl = "mongodb+srv://goodnessaig1:osemudiame12@cluster0.uhn05xg.mongodb.net/?retryWrites=true&w=majority";
+const cloudDBUrl ="mongodb+srv://goodnessaig1:osemudiame12@cluster0.uhn05xg.mongodb.net/?retryWrites=true&w=majority"
+//  "mongodb+srv://goodnessaig1:osemudiame12@cluster0.uhn05xg.mongodb.net/?retryWrites=true&w=majority";
 if (process.env.NODE_ENV === 'production') {
   // App is not running on localhost, connect to MongoDB Cloud
-  mongoose.connect(cloudDBUrl, { useNewUrlParser: true, useUnifiedTopology: true })
+  mongoose.connect(cloudDBUrl)
     .then(() => {
       console.log('Connected to MongoDB Cloud');
     })
@@ -26,7 +27,7 @@ if (process.env.NODE_ENV === 'production') {
 } else {
   // App is running on localhost, connect to local MongoDB instance
   const localDBUrl = process.env.DATABASE
-  mongoose.connect(cloudDBUrl, { useNewUrlParser: true, useUnifiedTopology: true })
+  mongoose.connect(cloudDBUrl)
     .then(() => {
       console.log('Connected to local MongoDB');
     })
