@@ -10,13 +10,8 @@ const async = require('async');
 require('dotenv').config();
 
 mongoose.Promise = global.Promise;
-// mongoose.connect(process.env.DATABASE, {autoIndex: false}).then(() => console.log('connected to DB'))
-
-// Check if the app is running on localhost or not
 const cloudDBUrl =process.env.CLOUD_URL
-//  "mongodb+srv://goodnessaig1:osemudiame12@cluster0.uhn05xg.mongodb.net/?retryWrites=true&w=majority";
 if (process.env.NODE_ENV === 'production') {
-  // App is not running on localhost, connect to MongoDB Cloud
   mongoose.connect(cloudDBUrl)
     .then(() => {
       console.log('Connected to MongoDB Cloud');
@@ -25,7 +20,6 @@ if (process.env.NODE_ENV === 'production') {
       console.error('Error connecting to MongoDB Cloud:', error);
     });
 } else {
-  // App is running on localhost, connect to local MongoDB instance
   const localDBUrl = process.env.DATABASE
   mongoose.connect(localDBUrl)
     .then(() => {
@@ -57,7 +51,6 @@ const { Site } = require('./models/site');
 // ========  Middleqares
 const { auth } = require('./middleware/auth');
 const { admin } = require('./middleware/admin');
-
 
 
 app.use(function(req, res, next) {
@@ -107,7 +100,7 @@ app.post('/api/product/shop',(req,res)=>{
 })
 
 // =========== BY ARRIVAL
-// --/articles?sortBy=createdAt&order=desc&limit=4
+// --/articles?sortBy=createdAt&orr=desc&limit=4
 app.get('/api/product/articles', (req,res)=>{
 
     let order = req.query.order ? req.query.order : 'asc';
@@ -217,7 +210,7 @@ app.get('/api/product/brands', (req, res)=>{
 
 app.get('/api/users/auth',auth, (req, res)=>{
         res.status(200).json({
-        // id:req.user._id,
+        id:req.user._id,
         isAdmin: req.user.role === 0 ? false : true,
         isAuth: true,
         email:req.user.email,
@@ -272,9 +265,6 @@ app.post('/api/users/login',(req, res)=>{
                 if(err) return res.status(400).send(err);
                 res.cookie('w_auth',user.token).status(200).json({
                     loginSuccess: true
-//  FIND THE EMAIL
-//  CHECK PASSWORD
-//  GENERATE A TOKEN 
                 })
             })
         })
@@ -298,8 +288,6 @@ app.get('/api/users/logout', auth,(req, res)=>{
 
 app.post('/api/users/uploadimage', auth, admin,formidable(),(req, res)=>{
     cloudinary.uploader.upload(req.files.file.path,(result)=>{
-        // console.log(result);
-        // console.log(req)
         res.status(200).send({
             publiic_id: result.publiic_id,
             url: result.url
@@ -452,65 +440,6 @@ app.post('/api/users/successBuy',auth,(req,res)=>{
         }
     )
 });
-
-
-// app.post('/api/users/successBuy',auth,(req,res)=>{
-//     let history = [];
-//     let transactionData = {}
-
-//     req.body.cartDetail.forEach((item)=>{
-//         history.push({
-//             dateOfPurchase: Date.now(),
-//             name: item.name,
-//             brand: item.brand.name,
-//             id: item._id,
-//             price: item.price,
-//             quantity: item.quantity,
-//             paymentId: req.body.paymentData.paymentID
-//         })
-//     })
-
-//     transactionData.user = {
-//         id: req.user._id,
-//         name: req.user.name,
-//         lastname: req.user.lastname,
-//         email: req.user.email
-//     }
-//     transactionData.data = req.body.paymentData;
-//     transactionData.product = history;
-        
-//     User.findOneAndUpdate(
-//         { _id: req.user._id },
-//         { $push:{ history:history }, $set:{ cart:[] } },
-//         { new: true },
-//         (err,user)=>{
-//             if(err) return res.json({success:false,err});
-
-//             const payment = new Payment(transactionData);
-//             payment.save( async(err,doc)=>{
-//                 if(err) return res.json({success:false,err});
-//                 let products = [];
-//                 doc.product.forEach(item=>{
-//                     products.push({id:item.id,quantity:item.quantity})
-//                  })
-                
-//                  try {
-//                     await new Promise.all(products.map(item => {
-//                       Product.updateOne(
-//                       {_id: item.id},
-//                       { $inc:{
-//                         "sold": item.quantity
-//                       }},
-//                       {new:false}
-//                     )
-//                   }))
-//                 }catch(err){
-//                     res.json({success: false, message: err.message})
-//                 }
-//             });
-//         }
-//     )
-// })
 
 app.post('/api/users/update_profile',auth,(req,res)=> {
     User.findOneAndUpdate(
